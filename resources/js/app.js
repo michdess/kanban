@@ -35,7 +35,7 @@ Vue.component('create-task-button', require('./components/CreateTaskButton.vue')
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = new Vue({
-    el: '#app',
+  el: '#app',
   provide() {
     return {
       taskListState: this.sharedState
@@ -57,7 +57,6 @@ const app = new Vue({
             axios.get('tasks')
             .then(function (response) {
               self.sharedState.tasks = response.data;
-                // commit('SET_TASKS', response.data);
             })
             .catch(function (error) {
                console.log("Tasks could not be retrieved "+error);

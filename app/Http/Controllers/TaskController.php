@@ -20,7 +20,11 @@ class TaskController extends Controller
     public function update($id)
     {
         $task = Task::find($id);
-        $task->update(request()->all());
+        if(request()->status == 'completed'){
+            $task->update(request()->all() + ['completed' => Carbon::now()]);          
+        } else {
+            $task->update(request()->all() + ['completed' => null]);  
+        }
         return $task;       
     }
     public function complete($id)

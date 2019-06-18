@@ -16,7 +16,9 @@ class CompleteTaskTest extends TestCase
         $this->signIn();
         $this->withoutExceptionHandling();
         $task = create('App\Task');
-        $response = $this->get('task/'.$task->id.'/complete');
+        $response = $this->patch('task/'.$task->id, [
+            'status' => 'completed'
+        ]);
         $response->assertStatus(200);
         $this->assertNotNull($task->fresh()->completed);
         $this->assertEquals('completed', $task->fresh()->status);
@@ -27,7 +29,9 @@ class CompleteTaskTest extends TestCase
         $this->withExceptionHandling();
         $task = create('App\Task');
         $this->assertEquals('started', $task->fresh()->status);
-        $response = $this->get('task/'.$task->id.'/complete');
+        $response = $this->patch('task/'.$task->id, [
+            'status' => 'completed'
+        ]);
         $response->assertStatus(302);
         $this->assertNull($task->fresh()->completed);
         $this->assertEquals('started', $task->fresh()->status);
@@ -37,8 +41,10 @@ class CompleteTaskTest extends TestCase
     {
         $this->signIn();
         $this->withoutExceptionHandling();
-        $task = create('App\Task', ['completed' => Carbon::now()]);
-        $response = $this->get('task/'.$task->id.'/incomplete');
+        $task = create('App\Task', ['status' => 'completed', 'completed' => Carbon::now()]);
+        $response = $this->patch('task/'.$task->id, [
+            'status' => 'started'
+        ]);
         $response->assertStatus(200);
         $this->assertNull($task->fresh()->completed);
         $this->assertEquals('started', $task->fresh()->status);
@@ -47,8 +53,10 @@ class CompleteTaskTest extends TestCase
     public function an_unauthorised_user_cannot_mark_a_completed_task_as_incomplete()
     {
         $this->withExceptionHandling();
-        $task = create('App\Task', ['completed' => Carbon::now(), 'status' => 'completed']);
-        $response = $this->get('task/'.$task->id.'/incomplete');
+        $task = create('App\Task', ['status' => 'completed', 'completed' => Carbon::now()]);
+        $response = $this->patch('task/'.$task->id, [
+            'status' => 'started'
+        ]);
         $response->assertStatus(302);
         $this->assertNotNull($task->fresh()->completed);
         $this->assertEquals('completed', $task->fresh()->status);

@@ -27,11 +27,11 @@
                 Completed {{ task.completed | moment("MMM DD, YYYY") }}</div>
             </div>
             <div v-if="task.completed" class="flex w-full rounded-b">    
-                <div @click="incomplete(task.id)" class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-blue-400 rounded-b">Undo</div>
+                <div @click="updateStatus(task.id, 'started')"  class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-blue-400 rounded-b">Undo</div>
             </div>
             <div v-else-if="task.status == 'started'" class="flex w-full rounded-b">    
                 <div @click="updateStatus(task.id, 'backlog')" class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-blue-500 rounded-bl">Backlog</div>
-                <div @click="complete(task.id, index)" class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-green-400 rounded-br">Complete</div>
+                <div @click="updateStatus(task.id, 'completed')" class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-green-400 rounded-br">Complete</div>
             </div>
             <div v-else class="flex w-full rounded-b">    
                 <div @click="updateStatus(task.id, 'started')" class="flex flex-grow justify-center cursor-pointer text-white text-sm px-4 py-2 bg-purple-500 rounded-b">Start</div>
@@ -69,30 +69,6 @@
             }
         },
         methods: {
-            complete(id, index) {
-                let self = this;
-                axios.get('task/'+id+'/complete')
-                .then(function (response) {
-                    let index = self.taskListState.tasks.map(function(e) { return e.id; }).indexOf(id);
-                    self.taskListState.tasks[index].status = response.data.status;
-                    self.taskListState.tasks[index].completed = response.data.completed;
-                })
-                .catch(function (error) {
-                   console.log("The task could not be marked as completed: "+error);
-                });
-            },
-            incomplete(id) {
-                let self = this;
-                axios.get('task/'+id+'/incomplete')
-                .then(function (response) {
-                    let index = self.taskListState.tasks.map(function(e) { return e.id; }).indexOf(id);
-                    self.taskListState.tasks[index].status = response.data.status;
-                    self.taskListState.tasks[index].completed = response.data.completed;
-                })
-                .catch(function (error) {
-                   console.log("The task could not be marked as incomplete "+error);
-                });
-            },
             updateStatus(id, status) {
                 let self = this;
                 axios.patch('task/'+id,{
@@ -101,6 +77,7 @@
                 .then(function (response) {
                     let index = self.taskListState.tasks.map(function(e) { return e.id; }).indexOf(id);
                     self.taskListState.tasks[index].status = status;
+                    self.taskListState.tasks[index].completed = response.data.completed;
                 })
                 .catch(function (error) {
                    console.log("The task status could not be updated "+error);
