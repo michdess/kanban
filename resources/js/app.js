@@ -7,8 +7,6 @@
 require('./bootstrap');
 window.Vue = require('vue');
 
-import store from './store';
-
 import PortalVue from 'portal-vue';
 Vue.use(PortalVue);
 
