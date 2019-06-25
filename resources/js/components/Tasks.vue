@@ -40,7 +40,7 @@
               <edit-task-modal
                 :show="editTaskModalOpen"
                 @close="editTaskModalOpen = false"
-                @remove="remove(editing.index)"
+                @remove="remove(editing.id)"
                 :task="editing"
               />
             </portal>
@@ -83,8 +83,9 @@
                    console.log("The task status could not be updated "+error);
                 });
             },
-            remove(index){
-                this.filteredTasks.splice(index, 1);
+            remove(id){
+                let index = this.taskListState.tasks.map(function(e) { return e.id; }).indexOf(id);
+                this.taskListState.tasks.splice(index, 1);
             },
             update(index){
                 this.editing = this.filteredTasks[index],

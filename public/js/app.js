@@ -2239,8 +2239,11 @@ __webpack_require__.r(__webpack_exports__);
         console.log("The task status could not be updated " + error);
       });
     },
-    remove: function remove(index) {
-      this.filteredTasks.splice(index, 1);
+    remove: function remove(id) {
+      var index = this.taskListState.tasks.map(function (e) {
+        return e.id;
+      }).indexOf(id);
+      this.taskListState.tasks.splice(index, 1);
     },
     update: function update(index) {
       this.editing = this.filteredTasks[index], this.editing.index = index, this.editTaskModalOpen = true;
@@ -58244,7 +58247,7 @@ var render = function() {
                         _vm.editTaskModalOpen = false
                       },
                       remove: function($event) {
-                        return _vm.remove(_vm.editing.index)
+                        return _vm.remove(_vm.editing.id)
                       }
                     }
                   })
